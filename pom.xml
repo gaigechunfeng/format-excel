@@ -22,6 +22,14 @@
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <outputDirectory>${project.build.outputDirectory}\..\..\lib</outputDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

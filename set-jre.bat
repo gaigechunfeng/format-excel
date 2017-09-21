@@ -1,0 +1,1 @@
+@set jre_home=D:\jdk1.8.0_74\jre
