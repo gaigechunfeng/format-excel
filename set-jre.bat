@@ -1,1 +1,1 @@
-@set jre_home=D:\jdk1.8.0_74\jre
+@set jre_home=D:\java\jdk-8u92-windows-x64
