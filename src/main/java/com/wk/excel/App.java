@@ -11,12 +11,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,18 +25,17 @@ public class App implements Runnable {
 
     private static final Map<String, MaterialMasterData> MaterialMasterDataMap = new HashMap<>();
     private static final Map<String, CustomerMasterData> CustomerMasterDataMap = new HashMap<>();
-    private static final Map<String, PhoneNameAddr> PhoneNameAddrMap = new HashMap<>();
-    private static final Map<String, Province> ProvinceMap = new HashMap<>();
+    //    private static final Map<String, PhoneNameAddr> PhoneNameAddrMap = new HashMap<>();
+//    private static final Map<String, Province> ProvinceMap = new HashMap<>();
     private static final Map<String, String> OrderStatusMap = new HashMap<>();
 
     private static final JPanel PANEL = new JPanel(new FlowLayout());
     private static final JTextArea ERROR_AREA = createErrorArea();
 
     private static JTextArea createErrorArea() {
-        JTextArea textArea = new JTextArea(50, 50);
 
 //        textArea.setSize(966, 400);
-        return textArea;
+        return new JTextArea(50, 55);
     }
 
 
@@ -49,26 +46,27 @@ public class App implements Runnable {
 
     public void run() {
 
-        JFrame frame = new JFrame("这个一个小工具");
+        JFrame frame = new JFrame("For Wife");
 
         renderPanel();
         frame.add(PANEL);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(966, 557);
+        frame.setSize(966, 900);
         frame.setVisible(true);
     }
 
     private void renderPanel() {
 
         PANEL.add(createUploadBtn());
-        PANEL.add(ERROR_AREA, FlowLayout.CENTER);
+//        PANEL.add(ERROR_AREA, FlowLayout.CENTER);
+        PANEL.add(new JScrollPane(ERROR_AREA), FlowLayout.CENTER);
     }
 
 
     private JButton createUploadBtn() {
 
         JButton button = new JButton("上传模板");
-        button.setSize(200, 100);
+        button.setPreferredSize(new Dimension(200,100));
         button.addActionListener(new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
 
@@ -121,7 +119,6 @@ public class App implements Runnable {
         write2File(workbook);
 
         close(workbook);
-
     }
 
     private void close(Workbook workbook) {
@@ -143,6 +140,8 @@ public class App implements Runnable {
             try (FileOutputStream fos = new FileOutputStream(file)) {
 
                 workbook.write(fos);
+
+                JOptionPane.showMessageDialog(PANEL, "导出的文件已经保存到【" + file + "】目录下！");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -216,7 +215,7 @@ public class App implements Runnable {
         }
     }
 
-    private void error(String s) {
+    private static void error(String s) {
         ERROR_AREA.append(s + "\r\n");
     }
 
@@ -302,6 +301,12 @@ public class App implements Runnable {
         switch (cell.getCellTypeEnum()) {
             case NUMERIC:
                 return double2String(cell.getNumericCellValue());
+            case FORMULA:
+                if (cell.getCachedFormulaResultTypeEnum() == CellType.NUMERIC) {
+                    return double2String(cell.getNumericCellValue());
+                } else {
+                    return cell.getStringCellValue().trim();
+                }
             default:
                 return cell.getStringCellValue().trim();
         }
@@ -362,17 +367,4 @@ public class App implements Runnable {
         return s2 == null || "".equals(s2.trim());
     }
 
-//    private static String getRowCellString(Row row, int i) {
-//        Cell cell = row.getCell(i);
-//        if (cell == null) {
-//            return null;
-//        } else {
-//            switch (cell.getCellTypeEnum()) {
-//                case NUMERIC:
-//                    return String.valueOf(cell.getNumericCellValue());
-//                default:
-//                    return cell.getStringCellValue();
-//            }
-//        }
-//    }
 }
